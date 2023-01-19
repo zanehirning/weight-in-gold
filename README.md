@@ -38,5 +38,5 @@ Django - The web framework used
 Python - Programming language
 RESTful API - used for weight conversion
 API - used for gold cost evaluation
-Authors
+## Authors
 Zane Hirning - https://github.com/zanehirning
