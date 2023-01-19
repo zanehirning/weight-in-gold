@@ -11,7 +11,7 @@ Django
 ## Installing
 ### Clone the repository to your local machine:
 ```python
-git clone https://github.com/your-username/django-gold-cost-calculator.git
+git clone https://github.com/zanehirning/weight-in-gold.git
 ```
 ### Install the required packages:
 pip install django
