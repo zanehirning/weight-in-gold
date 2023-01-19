@@ -1,0 +1,270 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'gold/style.css' %}" rel="stylesheet">
+    <title>Software Development Plan</title>
+</head>
+<body>
+    <div class="blue shadowed stuff-box">
+		<h1> Phase 0: Requirements Specification </h1>
+			<h2> The Point Of This Project: </h2>
+                <p> This project will consist of using two API's to transfer someones weight into the value of gold of that weight. It will be able to take several different types of units, these may include: U.S. Ton, gram, kilogram, troy ounce, pound, ounces, etc. </p>
+			<h2> Things I Know How To Do: </h2>
+				<ul>
+					<li>How to generate an API key and fetch the data from the url</li>
+					<li> Convert different units of mass into the intended unit || algorithm may look something like (fromVal * 1/meter->toUnit(firstType) * meter->toUnit(secondType))</li>
+                    <li> Create divs and buttons that work onclick </li>
+                    <li> Create a json error. </li>
+				</ul>
+
+			<h2> Things I Don't Know How To Do: </h2>
+			<ul>
+                <li> I am unsure how exactly to set up the django app. The REST Api creation will be the most difficult part of this project for me. I will need to review the lectures and freshen up my knowledge. </li>
+            </ul>
+            <p>Overall, I am pretty confident that this project will go smoothly in theory. It probably will not go as smooth as I am hoping however.</p>
+            <p>There are not very many things that I have no clue how to do, which is usually a good sign. Problems will probably turn up in design and implementation phase. </p>
+	</div>
+
+	<div class="green shadowed stuff-box">
+	<h1> Phase 1: System Analysis </h1>
+		<h2> Output: </h2>
+			<p> The final product of this assignment will be an application that can take a number and unit type as input and convert that to the value of gold in dollars. The output will be placed in green div's when successful, and placed in red div's when unsuccessful. All the div's will have an onclick event listener that will remove them when clicked, this is very similar to the last assignment. The ouput will contain the value and the current date. </p>
+			<hr>
+		<h2> Input: </h2>
+			<p> This project will take input from the user in the form of an integer(weight) and different unit types for their weight. The available unit types are placed in a drop-down menu. If any input is missing, a red div will be created explaining the error and it will not compute the value (obviously). </p> 
+	</div>
+
+	<div class="black shadowed stuff-box">
+	<h1> Phase 2: Design </h1>
+        <h2>gold app</h2>
+            <h3>index.html</h3>
+                <p> The content in this file will contain the U.I. and the script to create new divs/delete divs onclick.</p>
+                <p> This page will need to display the latest market price of gold, have a precept when retrieving data until it arrives.</p>
+                <p> The calculate button will activate a callback gunction that reads the input, validate the input, make a fetch to the unitconv app if it is valid, multiply the returned troy ounces by the price of gold, create the div, finish.</p>
+
+            <h3>script.js</h3>
+                <p>This script will contain a couple of things, those of which include:</p>
+                    <ul>
+                        <li>A remove function to remove div's onclick | remove()</li>
+                        <li>A function to convert the unit to it's price in gold, probably called goldCost | goldCost()</li>
+                        <li>A fetch() to grab the API's data, this data will be the price of the gold, which is used in the goldCost() method.</li>
+                    </ul>
+
+            <h3>urls.py</h3>
+                <p> This file will contain a url path to the page that contains the U.I.</p>
+
+            <h3>views.py</h3>
+                <p> This will have a generic index function that will respond to GET requests.</p>
+
+            <h3>models.py</h3>
+                <p> This portion won't have a need for a model's file.</p>
+
+        <h2>unitconv app</h2>
+            <h3>index.html</h3>
+                <p>This will display the json object that is requested</p>    
+
+            <h3>urls.py</h3>
+                <p>This will contain a url path to the conversion page, the page will just relay the specific json portion.</p>
+
+            <h3>views.py</h3>
+                <p>
+                    This page will contain a portion of the data in the form of a json dictionary.
+                    The view will be called convert and will respond to GET requests in forms similar to this:http://localhost:8000/unitconv/convert?from=lb&to=t_oz&value=3.14159
+                </p>
+
+            <h3>models.py</h3>
+                <p> This file will contain a django model. This django model will take the "from" unit and convert it to the "to" unit.  </p>
+            <p>Side Note: This app will need a populate method that is ran to populate the database</p>
+	</div>
+
+    <div class="red shadowed stuff-box" id="Phase3">
+        <h1> Phase 3: Implementation </h1>
+        <h2>gold app</h2>
+            <h3>index.html</h3>
+                <p>U.I portion</p>
+                <p> 
+                    &lt;div class="black shadowed stuff-box"&gt;<br/>
+                        &emsp;&lt;h1&gt;Worth Your Weight In Gold&lt;/h1&gt;<br/>
+                        &emsp;&lt;h3&gt;Input your weight and press the = button to see your worth&lt;/h3&gt;<br/>
+                        &emsp;&lt;p&gt; <br/>
+                        &emsp;&emsp;&lt;input type="number" id="weight"&gt; <br/>
+                        &emsp;&emsp;&emsp;&lt;select id="drop-down"&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="T"&gt;Tons&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="g"&gt;Grams&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="t_oz"&gt;Troy Ounces&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="kg"&gt;Kilograms&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="lb"&gt;Pounds&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&emsp;&lt;option value="oz"&gt;Ounces&lt;/option&gt;<br/>
+                        &emsp;&emsp;&emsp;&lt;/select&gt;<br/>
+                        &emsp;&emsp;&lt;button type="button" onclick="conversion(outputDiv)" id="button"&gt;=&lt;/button&gt;         <br/>
+                        &emsp;&lt;/p&gt;<br/>
+                    &lt;/div&gt;<br/>
+                </p>
+            <hr>
+
+            <h3>script.js</h3>
+                <p id="script">
+               <!--get data from api-->>
+                var url = 'https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD?start_date=2022-11-07&end_date=2022-11-07&api_key=zqLy8_QQSVPrjWE91qA4';<br/>
+                var theData;     <br/>
+                fetch(url)<br/>
+                &emsp;.then(response => response.json())<br/>
+                &emsp;.then(json => {<br/>
+                &emsp;    theData = json;<br/>
+                &emsp;})<br/>
+
+                <!--get data from REST api-->
+
+                function conversion(outputDiv) {<br/>
+                    &emsp;var protocol = window.location.protocol;<br/>
+                    &emsp;var hostname = window.location.hostname;<br/>
+                    &emsp;var port = window.location.port;<br/>
+                    &emsp;var weight = document.querySelector('#weight');<br/>
+                    &emsp;var unit = document.querySelector('#drop-down');<br/>
+                    &emsp;console.log(unit.value);<br/>
+                    &emsp;var convURL = `${protocol}//${hostname}:${port}/unitconv/convert?from=${unit.value}&to=t_oz&value=${weight.value}`;<br/>
+                    &emsp;var convData;<br/>
+                    &emsp;fetch(convURL)<br/>
+                    &emsp;.then(response => response.json())<br/>
+                    &emsp;.then(json => {<br/>
+                    &emsp;&emsp;convData = json;<br/>
+                    &emsp;&emsp;var d = new Date();<br/>
+                    &emsp;&emsp;var calculateDiv = document.createElement('div');<br/>
+                    &emsp;&emsp;calculateDiv.className = "green shadowed stuff-box"<br/>
+                    &emsp;&emsp;var calculatePara = document.createElement('p');<br/>
+                    &emsp;&emsp;calculatePara.textContent = `At ${d} ${weight.value} ${unit.options[unit.selectedIndex].text} of Gold is worth $${Math.round(convData['value']*theData.dataset.data[0][1]*100)/100}`;<br/>
+                    &emsp;&emsp;calculateDiv.appendChild(calculatePara, true);<br/>
+                    &emsp;&emsp;calculateDiv.setAttribute('onclick', calculateDiv.remove())  <br/>
+                    &emsp;&emsp;outputDiv.appendChild(calculateDiv, true);<br/>
+                    &emsp;&emsp;outputDiv.insertBefore(calculateDiv, outputDiv.firstElementChild)            <br/>
+                    &emsp;&emsp;}<br/>
+                    });<br/>
+                    }    <br/>
+                }<br/>
+
+                <!--Remove function-->
+
+                calculateDiv.addEventListener('click', (e) => {<br/>
+                    &emsp;    remove(calculateDiv);<br/>
+                });<br/>
+
+                function remove(calculateDiv) {<br/>
+                    &emsp;    document.querySelector(calculateDiv.firstChildElement.remove());<br/>
+                }<br/>
+                </p>
+            <hr>
+                
+            <h3>urls.py</h3>
+                <p> 
+                   urlpatterns= [
+                &emsp;    path('', views.index, name='index'),
+                ]
+                </p>
+            <hr>
+
+            <h3>views.py</h3>
+                <p>
+                    def index(request):
+                &emsp;    template_name = "gold/index.html"
+                &emsp;    return render(request, template_name)
+                </p>
+            <hr>
+
+                
+        <h2>unitconv app</h2>
+            <h3>views.py</h3>
+                <p>
+                    def convert(request): <br/>
+                    &emsp;    table = convTable<br/>                            
+                    &emsp;    firstUnit = request.GET['from']<br/>
+                    &emsp;    secondUnit = request.GET['to']<br/>
+                    &emsp;    value = request.GET['value']<br/>
+                    &emsp;    if firstUnit=='' or secondUnit=='' or value=='':<br/>
+                    &emsp;&emsp;    return JsonResponse({'error': 'One or more of these values are not in the correct input', 'usage': 'from - T | lb | t_oz | g | kg | oz // to - T | lb | t_oz | g | kg | oz // value - floating point integer'})<br/>
+                    &emsp;                                    <br/>
+                    &emsp;    if firstUnit == 't_oz' or secondUnit == "t_oz":<br/>
+                    &emsp;&emsp;    if firstUnit.isdigit() or secondUnit.isdigit() or not value.isdigit():<br/>
+                    &emsp;&emsp;        return JsonResponse({'error': 'One or more of these values are not in the correct input', 'usage': 'from - T | lb | t_oz | g | kg | oz // to - T | lb | t_oz | g | kg | oz // value - floating point integer'})<br/>
+                    &emsp;&emsp;    converted_unit = table.toUnit(table, firstUnit, secondUnit, value)<br/>
+                    &emsp;&emsp;    return JsonResponse({'unit': secondUnit, 'value': (converted_unit)})<br/>
+                    &emsp;                                    <br/>
+                    &emsp;    if not firstUnit.isalpha() or not secondUnit.isalpha() or not value.isdigit():<br/>
+                    &emsp;&emsp;        return JsonResponse({'error': 'One or more of these values are not in the correct input', 'usage': 'from - T | lb | t_oz | g | kg | oz // to - T | lb | t_oz | g | kg | oz // value - floating point integer'})<br/>
+                    &emsp;                                    <br/>
+                    &emsp;    converted_unit = table.toUnit(table, firstUnit, secondUnit, value)<br/>
+                    &emsp;    return JsonResponse({'unit': secondUnit, 'value': (converted_unit)})<br/>
+                </p>   
+                <hr> 
+                
+            <h3>urls.py</h3>
+                <p>
+                    urlpatterns= [
+                        path('convert', views.convert, name='convert'),
+                    ]
+                </p>
+                <hr>
+            
+            <h3>models.py</h3>
+                <p> 
+                    class convTable(models.Model):
+                    &emsp;unit = models.CharField(max_length=10)
+                    &emsp;float = models.FloatField(max_length=40)
+                    &emsp;def toUnit(self):
+                    &emsp;&emsp;return self.float
+                </p>
+                <hr>
+    </div>
+
+    <div class="yellow shadowed stuff-box">
+        <h1> Phase 4: Testing & Debugging </h1>
+            <h2> Flaws in design/implementation: </h2>
+            <ol>
+                <li> The largest setback I faced was not throroughly understanding django models/ the unit conversion app. I ended up making more of a function, than a utilizable database. I ended up having to go back and change all of the code.</li>
+                <li> I had some issues with removing certain div's and getting the cost of the gold data.  </li>
+                <li> Eventually, I fixed removing the certain divs and getting the cost of the gold data by utilizing the debugger and console. The problem with getting the data was a simple typo. </li>
+                <li> For the most part however, this assignment went very smooth. It did not take me an incredibly long time, and the bugs were extremely easy to fix and debug.</li>
+            </ol>
+    
+    </div>
+
+    <div class="blue shadowed stuff-box">
+        <h1> Phase 5: Deployment </h1>
+            <h2> Deployed: </h2>
+                <p>
+                    After turning this assignment in and downloading it, everything looks alright and it should work on the grader's computer.
+                </p>
+    
+    </div>
+
+    <div class="black shadowed stuff-box">
+        <h1> Phase 6: Maitenance </h1>
+            <h2> Sloppily written/hard to understand: </h2>
+                <ol>
+                    <li> I feel as if this code is decently well-written. I think that my javascript code could be cleaned up and altered. It works, but it could probably be better. </li>
+                    <li> I understand how and why everything is working within this code. I feel as if I understand the whole idea of fetching the data and utilizing the data, as well as how the REST API works. </li>
+                    <li> A bug should be fairly easy to debug. Utilizing the console log and django's error messages will make debugging an issues fairly easy. </li>
+                </ol>
+            <h2> Will this documentation make sense in the future: </h2>
+                <ol>
+                    <li> This document should be pretty clear to me in the future. The phases explaining the project were done well enough, and the design and implementation was decent. </li>
+                    <li> If they understand how REST APIs work and normal APIS, the may be able to understand the code. However, they would also need to have a grasp on django, html, and javascript </li>
+                </ol>
+            <h2> Adding a new feature: </h2>
+                <ol>
+                    <li> Adding a new feature would most likely consist of a new unit to convert to. This would be an extremely easy implementation. The only thing that would need changed is some of the html, and the migration script to contain more units. </li>
+                </ol>
+    
+            <h2> Will this program continue to work after upgrading: </h2>
+                <ol>
+                    <li> If my computer's hardware is upgraded, this program should continue to run. </li>
+                    <li> If the operating system is upgraded, this program should still work. Assuming there are no drastic changes how API's function, how django functions, or how javascript functions. </li>
+                </ol>     
+        </div>
+    
+</body>
+</html>

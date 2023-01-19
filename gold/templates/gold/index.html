@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'gold/style.css' %}" rel="stylesheet">
+    <title>Weight In Gold</title>
+</head>
+<body>
+    <div class="black shadowed stuff-box">
+        <h1>Worth Your Weight In Gold</h1>
+        <h3>Input your weight and press the = button to see your worth</h3>
+        <h3>Results can be removed by pressing on the result</h3>
+        <p> 
+            <input type="number" id="weight"> 
+                <select id="drop-down">
+                    <option value="T">Tons</option>
+                    <option value="g">Grams</option>
+                    <option value="t_oz">Troy Ounces</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="lb">Pounds</option>
+                    <option value="oz">Ounces</option>
+                </select>
+            <button type="button" onclick="conversion(outputDiv)" id="button">=</button>         
+        </p>
+        <p id="cost_gold"></p>
+    </div>
+    <div class="outputDiv">
+
+    </div>
+
+
+    <script type="text/javascript"> 
+
+        ///Fetch the API Data
+
+        var url = 'https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD?start_date=2022-11-07&end_date=2022-11-07&api_key=zqLy8_QQSVPrjWE91qA4';
+        var theData;
+
+        document.querySelector('#cost_gold').innerHTML = "Please Wait";
+        fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                theData = json;
+                document.querySelector("#cost_gold").innerHTML = `The price of gold as of ${theData.dataset.data[0][0]} is ${theData.dataset.data[0][1]}$ per Troy Oz.`;
+            })
+            .catch(err => {
+                document.querySelector("#cost_gold").innerHTML = `Something Went Wrong, Please Refresh The Page To Fetch The Data`;
+            });
+
+        ///Get The REST API Data
+        var outputDiv = document.createElement('div');
+        document.querySelector('body').appendChild(outputDiv, true);
+        
+        function conversion(outputDiv) {
+            var protocol = window.location.protocol;
+            var hostname = window.location.hostname;
+            var port = window.location.port;
+            var weight = document.querySelector('#weight');
+            var unit = document.querySelector('#drop-down');
+            console.log(unit.value);
+            var convURL = `${protocol}//${hostname}:${port}/unitconv/convert?from=${unit.value}&to=t_oz&value=${weight.value}`;
+                var convData;
+                
+                if (isNaN(weight.value)) {
+                    var calculateDiv = document.createElement('div');
+                    calculateDiv.className = "red shadowed stuff-box"
+                    var calculatePara = document.createElement('p');
+                    calculatePara.textContent = `Please input a number`;
+                    calculateDiv.appendChild(calculatePara, true);     
+                    outputDiv.appendChild(calculateDiv, true);
+                    outputDiv.insertBefore(calculateDiv, outputDiv.firstElementChild)
+                }
+                else {
+                    fetch(convURL)
+                    .then(response => response.json())
+                    .then(json => {
+                        convData = json;
+                        var d = new Date();
+                        if (json.error) {
+                            var calculateDiv = document.createElement('div');
+                            calculateDiv.className = "red shadowed stuff-box"
+                            var calculatePara = document.createElement('p');
+                            calculatePara.textContent = `There was an error`;
+                            calculateDiv.appendChild(calculatePara, true);  
+                            calculateDiv.setAttribute('onclick', calculateDiv.remove())  
+                            outputDiv.appendChild(calculateDiv, true);
+                            outputDiv.insertBefore(calculateDiv, outputDiv.firstElementChild)
+                            calculateDiv.addEventListener('click', (e) => {
+                                remove(calculateDiv);
+                            });
+                        
+                        }
+                        else {
+                            var calculateDiv = document.createElement('div');
+                            calculateDiv.className = "green shadowed stuff-box"
+                            var calculatePara = document.createElement('p');
+                            var totalCost = (convData['value']*theData.dataset.data[0][1])
+                            calculatePara.textContent = `At ${d} ${weight.value} ${unit.options[unit.selectedIndex].text} of Gold is worth $${(Math.round((totalCost)*100)/100).toLocaleString()}`;
+                            calculateDiv.appendChild(calculatePara, true);
+                            calculateDiv.setAttribute('onclick', calculateDiv.remove())  
+                            outputDiv.appendChild(calculateDiv, true);
+                            outputDiv.insertBefore(calculateDiv, outputDiv.firstElementChild)            
+                            calculateDiv.addEventListener('click', (e) => {
+                                remove(calculateDiv);
+                            });
+                        }
+                    });
+                }    
+        }
+
+        function remove(calculateDiv) {
+            document.querySelector(calculateDiv.remove());
+        }
+    </script>
+
+    
+</body>
+</html>
