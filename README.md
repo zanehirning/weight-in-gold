@@ -34,9 +34,9 @@ Click the "Calculate" button.
 The cost of gold for your weight will be displayed on the page.
 
 ## Built With
-Django - The web framework used
-Python - Programming language
-RESTful API - used for weight conversion
+Django - The web framework used |
+Python - Programming language |
+RESTful API - used for weight conversion |
 API - used for gold cost evaluation
 ## Authors
 Zane Hirning - https://github.com/zanehirning
